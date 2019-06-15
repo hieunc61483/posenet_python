@@ -49,7 +49,6 @@ def main():
 
             keypoint_coords *= output_scale
 
-            # TODO this isn't particularly fast, use GL for drawing and display someday...
             overlay_image = posenet.draw_skel_and_kp(
                 display_image, pose_scores, keypoint_scores, keypoint_coords,
                 min_pose_score=0.15, min_part_score=0.1)
@@ -58,7 +57,18 @@ def main():
             frame_count += 1
             if cv2.waitKey(1) & 0xFF == ord('q'):
                 break
-
+            # Open file
+            file = open("log.txt", "a")
+            for pi in range(len(pose_scores)):
+                    if pose_scores[pi] == 0.:
+                        break
+                    print('Pose #%d, score = %f' % (pi, pose_scores[pi]))
+                    file.write('Pose #%d, score = %f \n' % (pi, pose_scores[pi]))
+                    for ki, (s, c) in enumerate(zip(keypoint_scores[pi, :], keypoint_coords[pi, :, :])):
+                        print('Keypoint %s, score = %f, coord = %s' % (posenet.PART_NAMES[ki], s, c))
+                        file.write('Keypoint %s, score = %f, coord = %s \n' % (posenet.PART_NAMES[ki], s, c))
+        # Close file
+        file.close()
         print('Average FPS: ', frame_count / (time.time() - start))
 
 

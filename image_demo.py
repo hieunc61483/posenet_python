@@ -60,13 +60,20 @@ def main():
             if not args.notxt:
                 print()
                 print("Results for image: %s" % f)
+
+                # Open file
+                file = open("log.txt", "a")
+                
                 for pi in range(len(pose_scores)):
                     if pose_scores[pi] == 0.:
                         break
                     print('Pose #%d, score = %f' % (pi, pose_scores[pi]))
+                    file.write('Pose #%d, score = %f \n' % (pi, pose_scores[pi]))
                     for ki, (s, c) in enumerate(zip(keypoint_scores[pi, :], keypoint_coords[pi, :, :])):
                         print('Keypoint %s, score = %f, coord = %s' % (posenet.PART_NAMES[ki], s, c))
-
+                        file.write('Keypoint %s, score = %f, coord = %s \n' % (posenet.PART_NAMES[ki], s, c))
+        # Close file
+        file.close()
         print('Average FPS:', len(filenames) / (time.time() - start))
 
 
